@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ country.common_name }} {% endblock %}
+
+
+{% block content %}
+    <div class="mt-3 ml-1">
+        <p><a href="{% url 'country-list' %}"> << Back to List Page</a></p>
+    </div>
+<section class="section">
+  <div class="container">
+
+    {% if country.flag_url %}
+        <figure class="image is-128x128 mb-5">
+          <img src="{{ country.flag_url }}" alt="{{ country.common_name }} Flag">
+        </figure>
+    {% endif %}
+
+    <div class="columns">
+
+      <div class="column is-two-thirds">
+        <h2 class="title is-4">{{ country.common_name }}</h2>
+        <p><strong>Official Name:</strong> {{ country.official_name }}</p>
+        <p><strong>Population:</strong> {{ country.population }}</p>
+        <p><strong>Area:</strong> {{ country.area }} km²</p>
+        <p><strong>Region:</strong> {{ country.region }}</p>
+        <p><strong>Subregion:</strong> {{ country.subregion }}</p>
+        <p><strong>UN Member:</strong> {{ country.un_member|yesno:"Yes,No" }}</p>
+        <p><strong>Independent:</strong> {{ country.independent|yesno:"Yes,No" }}</p>
+        <p><strong>Start of Week:</strong> {{ country.start_of_week }}</p>
+
+        <p><strong>Capitals:</strong>
+          {% for capital in country.capitals.all %}
+            {{ capital.name }}{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            No capitals listed.
+          {% endfor %}
+        </p>
+      </div>
+
+    <form action="" method="get" class="column is-one-third">
+      <div >
+        <div class="field">
+          <label class="label">Language</label>
+          <div class="control">
+            <input class="input" name="language" type="text" {% if language %}value={{ language }}{% endif %}  placeholder="Optional">
+          </div>
+        </div>
+          <div  class="py-2 has-background-success has-text-centered">
+              <button name="btn" value="submit">Get same region countries</button>
+          </div>
+      </div>
+
+    {% if clicked %}
+        <ul>
+        <h3 class="p-2 mt-3 has-background-info	">Region : {{ country.region }} {% if language %} | Language: {{ language }} {% endif %}</h3>
+          {% for c in same_region_countries %}
+            <li>{{ forloop.counter }}. {{ c.common_name }}</li>
+          {% endfor %}
+        </ul>
+    {% endif %}
+    </form>
+
+
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
