@@ -1,6 +1,8 @@
 from django.http import Http404
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,6 +18,7 @@ from .models import Country
 class CountryViewSet(ModelViewSet):
     serializer_class = CountrySerializer
     queryset = Country.objects.all()
+    permission_classes = [IsAuthenticated]
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = CountryFilter
@@ -34,7 +37,7 @@ class CountryViewSet(ModelViewSet):
         except Country.DoesNotExist as e:
             return Response({'Country not found': str(e)}, status=404)
 
-class CountryListView(ListView):
+class CountryListView(LoginRequiredMixin, ListView):
     template_name = 'country_list.html'
     context_object_name = 'countries'
     paginate_by = 10
@@ -48,7 +51,7 @@ class CountryListView(ListView):
             )
         return queryset
 
-class CountryDetailView(DetailView):
+class CountryDetailView(LoginRequiredMixin, DetailView):
     queryset = Country.objects.all()
     template_name = 'countries/country_detail.html'
     context_object_name = 'country'
@@ -60,8 +63,6 @@ class CountryDetailView(DetailView):
         language = self.request.GET.get('language', None)
         clicked = self.request.GET.get('btn', None)
 
-
-
         if clicked:
             same_region_countries = Country.objects.filter(region=current_country.region)
             context['clicked'] = True
@@ -69,26 +70,4 @@ class CountryDetailView(DetailView):
                 context['language'] = language.capitalize()
                 same_region_countries = same_region_countries.filter(languages__name__iexact=language)
             context['same_region_countries'] = same_region_countries
-
-        print(context)
         return context
-
-"""
-    def get_queryset(self):
-        queryset = Country.objects.all()
-        query = self.request.GET.get('language', None)
-
-        if query:
-            queryset = queryset.filter(languages__name=query)
-        return queryset
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        pk = self.kwargs['pk']
-        try:
-            obj = queryset.get(pk=pk)
-        except Country.DoesNotExist:
-            raise Http404(f"Country {pk} not found")
-
-        return obj
-"""

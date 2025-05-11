@@ -5,7 +5,21 @@
     <title>{% block title %} Country Info {% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
 </head>
-<body>
+<body class="m-5">
+    {% if user.is_authenticated %}
+        <div class="p-3" >
+            <a href="{% url "profile" %}"><h2>Hey, {{ user.username }}</h2></a>
+        </div>
+        <form action="{% url 'logout' %}" method="post" class="p-2">
+            {% csrf_token %}
+            <button class="has-background-success p-2" type="submit">Logout</button>
+        </form>
+    {% else %}
+        <div class="p-3">
+            <a href="{% url 'login' %}"> Login</a>
+        </div>
+
+    {% endif %}
     {% block content %}
     {% endblock %}
 </body>
