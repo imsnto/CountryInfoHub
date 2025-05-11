@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ user.username }}
+{% endblock %}
+
+
+{% block content %}
+    <div>
+        <a href="{% url 'country-list' %}"><p> << Go to country List page</p></a>
+    </div>
+{% endblock %}

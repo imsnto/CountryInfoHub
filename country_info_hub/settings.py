@@ -39,8 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
+    'drf_spectacular',
     'django_filters',
     'countries',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -130,5 +133,19 @@ COUNTRY_API_URL = config('COUNTRY_API_URL', default='https://restcountries.com/v
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Country Info Hub API',
+    'DESCRIPTION': 'This application provides a RESTful API for the Country Info Hub API.',
+    'VERSION': '0.1.0',
+}
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = '/'
